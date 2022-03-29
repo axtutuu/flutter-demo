@@ -38,6 +38,7 @@ dependencies:
   webview_flutter: ^3.0.1
   webview_cookie_manager: ^2.0.6
   flutter_speed_dial: ^5.0.0+1
+  fcm_config: ^3.3.5
 
 dev_dependencies:
   flutter_test:

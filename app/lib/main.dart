@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/cookie.dart';
 import 'package:flutter_demo/nfc.dart';
+import 'package:flutter_demo/push.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:fcm_config/fcm_config.dart';
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await FCMConfig.instance
+    .init(
+      defaultAndroidChannel: const AndroidNotificationChannel('fcm_channel', 'Fcm config', importance: Importance.high),
+      onBackgroundMessage: _firebaseMessagingBackgroundHandler
+    );
   runApp(const MyApp());
 }
 
@@ -108,6 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -120,6 +141,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.nfc),
             label: 'NFC',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'push',
           )
         ], onTap: (int idx) {
           debugPrint(idx.toString());
@@ -129,6 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
               break;
             case 2:
               Navigator.push(context, MaterialPageRoute(builder: (context) => const NFCViewPage()));
+              break;
+            case 3:
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PushView()));
               break;
           }
         }),
